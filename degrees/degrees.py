@@ -97,8 +97,8 @@ def shortest_path(source, target):
     visited = set()
     path = []
     found_path = False
-    while found_path == False:
-        if found_path == True:
+    while not found_path:
+        if found_path:
             break
         current_node = queue.remove()
         visited.add(current_node)
