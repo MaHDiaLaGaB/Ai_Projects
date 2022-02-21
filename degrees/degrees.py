@@ -55,7 +55,7 @@ def load_data(directory):
 def main():
     if len(sys.argv) > 2:
         sys.exit("Usage: python degrees.py [directory]")
-    directory = sys.argv[1] if len(sys.argv) == 2 else "small"
+    directory = sys.argv[1] if len(sys.argv) == 2 else "large"
 
     # Load data from files into memory
     print("Loading data...")
@@ -96,7 +96,10 @@ def shortest_path(source, target):
     queue.add(node_init)
     visited = set()
     path = []
-    while queue:
+    found_path = False
+    while found_path == False:
+        if found_path == True:
+            break
         current_node = queue.remove()
         visited.add(current_node)
         neighbors = neighbors_for_person(current_node.state)
@@ -107,14 +110,13 @@ def shortest_path(source, target):
                 queue.add(neighbor_node)
                 if neighbor_node.state == target:
                     print('i found my path')
-                    # queue.clear()
+                    found_path = True
                     while neighbor_node.parent is not None:
                         path.append((neighbor_node.action, neighbor_node.state))
                         neighbor_node = neighbor_node.parent
                     path.reverse()
+                    break
     return path
-
-    # raise NotImplementedError
 
 
 def person_id_for_name(name):
