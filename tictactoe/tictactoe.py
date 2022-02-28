@@ -38,7 +38,7 @@ def player(board):
     if slots == 9:
         return X
 
-    if turn_x < turn_o:
+    if turn_x <= turn_o:
         return X
     else:
         return O
@@ -54,6 +54,7 @@ def actions(board):
         for j in range(len(board[i])):
             if board[i][j] == EMPTY:
                 action_move.add((i, j))
+                # print(action_move)
             # elif board[i][j] != EMPTY:
             #     raise Exception("the cell is already taken")
     return action_move
@@ -64,11 +65,11 @@ def result(board, action):
     Returns the board that results from making move (i, j) on the board.
     """
     # validate the action move
-    # if len(action) != 2:
-    #     raise Exception("it's not valid action")
-    #
-    # if action[0] < 0 or action[0] > 2 or action[1] < 0 or action[1] > 2:
-    #     raise Exception("result function: incorrect action value")
+    if len(action) != 2:
+        raise Exception("it's not valid action")
+
+    if action[0] < 0 or action[0] > 2 or action[1] < 0 or action[1] > 2:
+        raise Exception("result function: incorrect action value")
 
     new_board = copy.deepcopy(board)
     # print(action)
@@ -134,89 +135,72 @@ def utility(board):
             return 0
 
 
+def minimizer(board):
+
+    if terminal(board):
+        return utility(board)
+
+    max_eval = float(math.inf)
+    children = actions(board)
+    for child in children:
+        max_eval = min(max_eval, maximizer(result(board, child)))
+    return max_eval
+
+
+def maximizer(board):
+
+    if terminal(board):
+        return utility(board)
+
+    min_eval = float(-math.inf)
+    children = actions(board)
+    for child in children:
+        min_eval = max(min_eval, minimizer(result(board, child)))
+    return min_eval
+
+
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
+
     """
     if depth == 0 or game is over in position return static evaluation of position 
     """
     if terminal(board):
         return None
-    # else:
-    #     if player(board) == X:
-    #         value, move = max_value(board)
-    #         return move
-    #     else:
-    #         value, move = min_value(board)
-    #         return move
 
-    # """
-    # if maximizing player:
-    #     maxEval = -infinity
-    #     for each child of position
-    #     eval = minimax(child, depth-1, false)
-    #     maxEval = max(maxEval, eval)
-    # """
+    # children = actions(board)
+    # for e in children:
+    #     break
+    # best_move = e
+    children = actions(board)
 
     if player(board) == X:
-        best = {'position': EMPTY, 'score': -math.inf}
+        max_eval = -math.inf
+        best_move = EMPTY
+
+        for child in children:
+            print(child)
+            current_eval = minimizer(result(board, child))
+
+            if current_eval > max_eval:
+                max_eval = current_eval
+                best_move = child
+        # return best_move
+
     else:
-        best = {'position': EMPTY, 'score': math.inf}
+        min_eval = math.inf
+        best_move = EMPTY
+        for child in children:
+            # i, j = child[0], child[1]
+            # board[i][j] = O
+            current_eval = maximizer(result(board, child))
+            # board[i][j] = EMPTY
 
-    for action in actions(board):
-        print(action)
-        make_move = result(board, action)
-        best_score = minimax(make_move)
-
-        board[action[0]][action[1]] = EMPTY
-        terminal(board)
-
-        best_score.update(position = action)
-
-        if player(board) == X:
-            if best_score['score'] > best['score']:
-                best = best_score
-            else:
-                if best_score['score'] < best['score']:
-                    best = best_score
-        return best
-
-
-# def max_value(board):
-#
-#     if terminal(board):
-#         return utility(board), None
-#
-#     v = float('-inf')
-#     move = None
-#     for action in actions(board):
-#         # v = max(v, min_value(result(board, action)))
-#         aux, act = min_value(result(board, action))
-#         if aux > v:
-#             v = aux
-#             move = action
-#             if v == 1:
-#                 return v, move
-#
-#     return v, move
-#
-#
-# def min_value(board):
-#     if terminal(board):
-#         return utility(board), None
-#
-#     v = float('inf')
-#     move = None
-#     for action in actions(board):
-#         # v = max(v, min_value(result(board, action)))
-#         aux, act = max_value(result(board, action))
-#         if aux < v:
-#             v = aux
-#             move = action
-#             if v == -1:
-#                 return v, move
-#
-#     return v, move
+            if current_eval < min_eval:
+                min_eval = current_eval
+                best_move = child
+    return best_move
 
 
