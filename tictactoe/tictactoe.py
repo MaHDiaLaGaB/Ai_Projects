@@ -135,28 +135,36 @@ def utility(board):
             return 0
 
 
-def minimizer(board):
+""" 
+    i added two extra functions just to avoid working 
+    with multiple outputs and tuples i had multiple
+    errors because of it so made it easy on me to make
+    to extra functions.
+"""
 
+
+def minimizer(board):
+    # recursively return minimum value for each move
     if terminal(board):
         return utility(board)
-
-    max_eval = float(math.inf)
-    children = actions(board)
-    for child in children:
-        max_eval = min(max_eval, maximizer(result(board, child)))
-    return max_eval
+    else:
+        min_eval = math.inf
+        children = actions(board)
+        for child in children:
+            min_eval = min(min_eval, maximizer(result(board, child)))
+    return min_eval
 
 
 def maximizer(board):
-
+    # recursively return maximum value for each move
     if terminal(board):
         return utility(board)
-
-    min_eval = float(-math.inf)
-    children = actions(board)
-    for child in children:
-        min_eval = max(min_eval, minimizer(result(board, child)))
-    return min_eval
+    else:
+        max_eval = -math.inf
+        children = actions(board)
+        for child in children:
+            max_eval = max(max_eval, minimizer(result(board, child)))
+    return max_eval
 
 
 def minimax(board):
@@ -170,10 +178,6 @@ def minimax(board):
     if terminal(board):
         return None
 
-    # children = actions(board)
-    # for e in children:
-    #     break
-    # best_move = e
     children = actions(board)
 
     if player(board) == X:
@@ -181,13 +185,13 @@ def minimax(board):
         best_move = EMPTY
 
         for child in children:
-            print(child)
+            # print(child)
             current_eval = minimizer(result(board, child))
 
             if current_eval > max_eval:
                 max_eval = current_eval
                 best_move = child
-        # return best_move
+        return best_move
 
     else:
         min_eval = math.inf
@@ -201,6 +205,4 @@ def minimax(board):
             if current_eval < min_eval:
                 min_eval = current_eval
                 best_move = child
-    return best_move
-
-
+        return best_move
