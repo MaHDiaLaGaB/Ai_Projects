@@ -204,5 +204,6 @@ def minimax(board):
 
             if current_eval < min_eval:
                 min_eval = current_eval
-                best_move = child
+                best_move\
+                    = child
         return best_move
