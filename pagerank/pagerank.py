@@ -112,7 +112,22 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    my_dict = {}
+    for i in corpus:
+        my_dict[i] = 1 / len(corpus)
+
+    a = 1 - damping_factor
+    b = a / len(corpus)
+    right = 0
+    # num_links is the number of links inside each page
+    # while True:
+    for value in corpus:
+        left = a / len(corpus)
+        for page in corpus:
+            if len(corpus[page]) != 0:
+                right += my_dict[page] / len(corpus[page])
+        right *= damping_factor
+        my_dict[value] = left + right
 
 
 if __name__ == "__main__":
