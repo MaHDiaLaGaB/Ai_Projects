@@ -113,33 +113,28 @@ def iterate_pagerank(corpus, damping_factor):
     PageRank values should sum to 1.
     """
     my_dict = {}
-
-    if len(corpus) != 0:
-        for i in corpus:
-            my_dict[i] = 1 / len(corpus)
-
     a = 1 - damping_factor
-    switch = True
-    # num_links is the number of links inside each page
-    while switch:
-        # if difference.values() < 0.001:
-        my_dict_copy = my_dict.copy()
-        dif_dict = {}
-        for value in corpus:
-            right = 0
-            left = a / len(corpus)
-            for page in corpus:
-                if len(corpus[page]) != 0:
-                    right += (my_dict[page] / len(corpus[page]))
-            right *= damping_factor
-            left += right
-            my_dict[value] = left
-            dif_dict[value] = abs(my_dict_copy[value] - my_dict[value])
-            switch = True
-        for x in dif_dict:
-            if dif_dict[x] > 0.1:
-                switch = False
 
+    for value in corpus:
+        my_dict[value] = 1 / len(corpus)
+    switch = True
+    # calculate the PR(p) equation
+    while switch:
+        my_dict_copy = my_dict.copy()
+        for value in corpus:
+            pr = a / len(corpus)
+            right = 0
+            
+            for link in corpus:
+                if value in corpus[link]:
+                    right += my_dict[link] / len(corpus[link])
+            right *= damping_factor
+            pr += right
+            my_dict[value] = pr
+            
+        for x in my_dict:
+            if abs(my_dict_copy[x] - my_dict[x]) < 0.001:
+                switch = False
     return my_dict
 
 
